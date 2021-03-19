@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
-set(CMAKE_C_COMPILER "gcc-9")
-set(CMAKE_CXX_COMPILER "g++-9")
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
 
 project(monitor)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
