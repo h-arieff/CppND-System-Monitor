@@ -7,6 +7,7 @@
 #include "process.h"
 #include "processor.h"
 #include "system.h"
+#include "linux_parser.h"
 
 using std::set;
 using std::size_t;
@@ -23,7 +24,12 @@ vector<Process>& System::Processes() { return processes_; }
 std::string System::Kernel() { return string(); }
 
 // TODO: Return the system's memory utilization
-float System::MemoryUtilization() { return 0.0; }
+float System::MemoryUtilization() {
+    if (mem_util==-1){
+        mem_util=LinuxParser::MemoryUtilization();
+    }
+    return mem_util;
+}
 
 // TODO: Return the operating system name
 std::string System::OperatingSystem() { return string(); }

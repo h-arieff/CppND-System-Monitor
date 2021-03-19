@@ -7,9 +7,7 @@
 #include <unordered_map>
 
 namespace LinuxParser {
-//mine
-bool mem_parsed=false;
-std::unordered_map<std::string,float> map_map;
+
 // Paths
 const std::string kProcDirectory{"/proc/"};
 const std::string kCmdlineFilename{"/cmdline"};

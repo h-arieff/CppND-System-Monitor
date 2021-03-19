@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <iostream>
 
 #include "linux_parser.h"
 
@@ -12,7 +13,10 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
-
+namespace LinuxParser {
+bool mem_parsed=false;
+std::unordered_map<std::string,float> mem_map;
+}
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -72,13 +76,25 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() {
-  if (mem_parsed){
-    float MemTotal=LinuxParser::mem_parsed["MemTotal"];
-    float MemFree=LinuxParser::mem_parsed["MemFree"];
+float LinuxParser::MemoryUtilization() {//this compicated method is used in case future functinality is ever added
+  //for example a better method of calculating utilized memory
+  if (LinuxParser::mem_parsed){
+    float MemTotal=LinuxParser::mem_map["MemTotal"];
+    float MemFree=LinuxParser::mem_map["MemFree"];
     return (MemTotal-MemFree)/MemTotal;
   }
   std::ifstream f{kProcDirectory+kMeminfoFilename};
+  string line;
+  string key;
+  int value;
+  while (std::getline(f,line)){
+    std::replace(line.begin(),line.end(),':',' ');
+    std::istringstream ss(line);
+    ss>>key>>value;
+    LinuxParser::mem_map[key]=value;
+  }
+  LinuxParser::mem_parsed=true;
+  return LinuxParser::MemoryUtilization();
 }
 
 // TODO: Read and return the system uptime
