@@ -20,7 +20,11 @@ class System {
 
   // TODO: Define any necessary private members
  private:
+  std::string os;
+  std::string kernel;//both are not going to be changing during execution
   float mem_util = {-1};
+  int proc=-1;
+  int proc_r=-1; 
   Processor cpu_ = {};
   std::vector<Process> processes_ = {};
 };

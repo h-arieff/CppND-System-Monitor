@@ -22,3 +22,11 @@ debug:
 .PHONY: clean
 clean:
 	rm -rf build
+
+.PHONY: test
+test:
+	g++-9 -std=c++17 test.cpp src/format.cpp src/process.cpp src/processor.cpp src/linux_parser.cpp src/system.cpp -Iinclude
+
+.PHONY: test-clean
+test-clean:
+	rm a.out

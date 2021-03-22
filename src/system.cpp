@@ -3,7 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include <iostream>
 #include "process.h"
 #include "processor.h"
 #include "system.h"
@@ -21,7 +21,12 @@ Processor& System::Cpu() { return cpu_; }
 vector<Process>& System::Processes() { return processes_; }
 
 // TODO: Return the system's kernel identifier (string)
-std::string System::Kernel() { return string(); }
+std::string System::Kernel() {
+    if (kernel==""){
+        kernel=LinuxParser::Kernel();
+    }
+    return kernel;
+}
 
 // TODO: Return the system's memory utilization
 float System::MemoryUtilization() {
@@ -32,13 +37,28 @@ float System::MemoryUtilization() {
 }
 
 // TODO: Return the operating system name
-std::string System::OperatingSystem() { return string(); }
+std::string System::OperatingSystem() {
+    if(this->os==""){
+        this->os=LinuxParser::OperatingSystem();
+    }
+    return this->os;
+}
 
 // TODO: Return the number of processes actively running on the system
-int System::RunningProcesses() { return 0; }
+int System::RunningProcesses() {
+    if (proc_r==-1){
+        proc_r=LinuxParser::RunningProcesses();
+    }
+    return proc_r;
+}
 
 // TODO: Return the total number of processes on the system
-int System::TotalProcesses() { return 0; }
+int System::TotalProcesses() {
+    if (proc==-1){
+        proc=LinuxParser::TotalProcesses();
+    }
+    return proc;
+}
 
 // TODO: Return the number of seconds since the system started running
-long int System::UpTime() { return 0; }
+long int System::UpTime() { return LinuxParser::UpTime();}//not very big so just tunnel

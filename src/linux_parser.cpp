@@ -13,10 +13,11 @@ using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
-namespace LinuxParser {
+
 bool mem_parsed=false;
 std::unordered_map<std::string,float> mem_map;
-}
+bool stat_parsed=false;
+std::unordered_map<std::string,std::vector<int>> stat_map;
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -38,6 +39,25 @@ string LinuxParser::OperatingSystem() {
     }
   }
   return value;
+}
+
+void parse_stat(bool u=false){
+  if (stat_parsed&&u){
+    return;
+  }
+  std::ifstream f{LinuxParser::kProcDirectory+LinuxParser::kStatFilename};
+  std::string line,key;
+  std::vector<int> v;
+  int t;
+  while (std::getline(f,line)){
+    v={};
+    std::stringstream s{line};
+    s>>key;
+    while (s>>t){
+      v.push_back(t);
+    }
+    stat_map[key]=v;
+  }
 }
 
 // DONE: An example of how to read data from the filesystem
@@ -76,11 +96,11 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() {//this compicated method is used in case future functinality is ever added
+float LinuxParser::MemoryUtilization(bool u) {//this compicated method is used in case future functinality is ever added
   //for example a better method of calculating utilized memory
-  if (LinuxParser::mem_parsed){
-    float MemTotal=LinuxParser::mem_map["MemTotal"];
-    float MemFree=LinuxParser::mem_map["MemFree"];
+  if (mem_parsed &&!u){
+    float MemTotal=mem_map["MemTotal"];
+    float MemFree=mem_map["MemFree"];
     return (MemTotal-MemFree)/MemTotal;
   }
   std::ifstream f{kProcDirectory+kMeminfoFilename};
@@ -91,14 +111,19 @@ float LinuxParser::MemoryUtilization() {//this compicated method is used in case
     std::replace(line.begin(),line.end(),':',' ');
     std::istringstream ss(line);
     ss>>key>>value;
-    LinuxParser::mem_map[key]=value;
+    mem_map[key]=value;
   }
-  LinuxParser::mem_parsed=true;
-  return LinuxParser::MemoryUtilization();
+  mem_parsed=true;
+  return LinuxParser::MemoryUtilization(false);
 }
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() {
+  std::ifstream f{kProcDirectory+kUptimeFilename};
+  int up1;
+  f>>up1;
+  return up1;
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -114,13 +139,33 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+vector<string> LinuxParser::CpuUtilization() {
+  parse_stat();
+  int tt=0;
+  for (auto& n : stat_map["cpu"])
+    tt += n;
+  return {std::to_string(1.0-(stat_map["cpu"][3]/tt))};
+}
 
 // TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses() {
+  parse_stat();
+  return stat_map["processes"][0];
+}
+
+float LinuxParser::Pcpuutil(){
+  parse_stat();
+  int tt=0;
+  for (auto& n : stat_map["cpu"])
+    tt += n;
+  return 1.0-(stat_map["cpu"][3]/tt);
+}
 
 // TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses() {
+  parse_stat();
+  return stat_map["procs_running"][0];
+}
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
