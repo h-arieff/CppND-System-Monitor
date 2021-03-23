@@ -98,7 +98,7 @@ void NCursesDisplay::Display(System& system, int n) {
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     box(system_window, 0, 0);
     box(process_window, 0, 0);
-    if (t=100){
+    if (t==100){
       system.update();//to be implimented later
       t=0;
     }
