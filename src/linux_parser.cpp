@@ -5,9 +5,10 @@
 #include <vector>
 #include <filesystem>
 #include <iostream>
+#include <pwd.h>
 
 #include "linux_parser.h"
-
+#include "process.h"
 namespace fs=std::filesystem;
 using std::stof;
 using std::string;
@@ -125,12 +126,10 @@ long LinuxParser::UpTime() {
   return up1;
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(Process p[[maybe_unused]]) { return 0; }
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
@@ -139,12 +138,12 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() {
+int LinuxParser::CpuUtilization() {
   parse_stat();
   int tt=0;
   for (auto& n : stat_map["cpu"])
     tt += n;
-  return {std::to_string(1.0-(stat_map["cpu"][3]/tt))};
+  return 1.0-(stat_map["cpu"][3]/tt);
 }
 
 // TODO: Read and return the total number of processes
@@ -153,36 +152,53 @@ int LinuxParser::TotalProcesses() {
   return stat_map["processes"][0];
 }
 
-float LinuxParser::Pcpuutil(){
-  parse_stat();
-  int tt=0;
-  for (auto& n : stat_map["cpu"])
-    tt += n;
-  return 1.0-(stat_map["cpu"][3]/tt);
-}
 
 // TODO: Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
   parse_stat();
   return stat_map["procs_running"][0];
 }
-
+std::unordered_map<string,string> LinuxParser::getStatus(Process p[[maybe_unused]]){
+  std::unordered_map<string,string> ret;
+  std::ifstream f{kProcDirectory+p.operator std::string()+kStatusFilename};
+  string line;
+  std::string key,value;
+  while (std::getline(f,line)){
+    std::stringstream ss{line};
+    ss>>key;
+    if (key.size()==0){
+      continue;
+    }
+    getline(ss,value);
+    ret[key]=value;
+  }
+  return ret;
+}
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Command(Process p[[maybe_unused]]) { return string(); }
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Ram(Process p[[maybe_unused]]) { return string(); }
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Uid(Process p[[maybe_unused]]) {
+  return p.status["Uid:"];
+}
 
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::User(Process p) {
+  struct passwd *pswd;
+  std::stringstream ss{p.status["Uid:"]};
+  int uid;
+  ss>>uid;
+  pswd=getpwuid(uid);
+  return pswd->pw_name;
+}
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(Process p[[maybe_unused]]) { return 0; }

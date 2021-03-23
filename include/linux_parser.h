@@ -5,7 +5,7 @@
 #include <regex>
 #include <string>
 #include <unordered_map>
-
+class Process;
 namespace LinuxParser {
 
 // Paths
@@ -41,19 +41,20 @@ enum CPUStates {
   kGuest_,
   kGuestNice_
 };
-std::vector<std::string> CpuUtilization();
+int CpuUtilization();
 float Pcpuutil();
 long Jiffies();
 long ActiveJiffies();
-long ActiveJiffies(int pid);
+long ActiveJiffies(Process p);
 long IdleJiffies();
 
 // Processes
-std::string Command(int pid);
-std::string Ram(int pid);
-std::string Uid(int pid);
-std::string User(int pid);
-long int UpTime(int pid);
+std::unordered_map<std::string,std::string> LinuxParser::getStatus(Process p);
+std::string Command(Process p);
+std::string Ram(Process p);
+std::string Uid(Process p);
+std::string User(Process p);
+long int UpTime(Process p);
 };  // namespace LinuxParser
 
 #endif
