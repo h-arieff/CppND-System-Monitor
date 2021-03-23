@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <pwd.h>
 
 #include "process.h"
 #include "linux_parser.h"
@@ -24,12 +25,17 @@ float Process::CpuUtilization() { return 0; }
 string Process::Command() { return string(); }
 
 // TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Ram() { return status["VmSize:"]; }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() {
     if (user==""){
-        user=LinuxParser::User(*this);
+        struct passwd *pswd;
+        std::stringstream ss{p.status["Uid:"]};
+        int uid;
+        ss>>uid;
+        pswd=getpwuid(uid);
+        user=pswd->pw_name;
     }
     return user;
 }
