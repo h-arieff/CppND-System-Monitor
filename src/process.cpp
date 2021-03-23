@@ -31,7 +31,7 @@ string Process::Ram() { return status["VmSize:"]; }
 string Process::User() {
     if (user==""){
         struct passwd *pswd;
-        std::stringstream ss{p.status["Uid:"]};
+        std::stringstream ss{status["Uid:"]};
         int uid;
         ss>>uid;
         pswd=getpwuid(uid);
