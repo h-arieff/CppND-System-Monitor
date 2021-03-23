@@ -179,8 +179,7 @@ std::unordered_map<string,string> LinuxParser::getStatus(Process p[[maybe_unused
 string LinuxParser::Command(Process p[[maybe_unused]]) { return string(); }
 
 // TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(Process p[[maybe_unused]]) { return string(); }
+// REMOVE: [[maybe_unused]] once you define the functio
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function

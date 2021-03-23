@@ -49,7 +49,7 @@ long ActiveJiffies(Process p);
 long IdleJiffies();
 
 // Processes
-std::unordered_map<std::string,std::string> LinuxParser::getStatus(Process p);
+std::unordered_map<std::string,std::string> getStatus(Process p);
 std::string Command(Process p);
 std::string Ram(Process p);
 std::string Uid(Process p);
