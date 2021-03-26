@@ -99,7 +99,6 @@ void NCursesDisplay::Display(System& system, int n) {
     box(system_window, 0, 0);
     box(process_window, 0, 0);
     if (t==3){
-      exit(122);
       system.update();//to be implimented later
       t=0;
     }
