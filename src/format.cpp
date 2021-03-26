@@ -13,7 +13,7 @@ const int sih {sim*mih};
 // REMOVE: [[maybe_unused]] once you define the function
 string Format::ElapsedTime(long seconds) {
     long hours, minutes;
-    hours = seconds/sih;
+    hours = seconds/sih%60;
     seconds = seconds%sih;
     minutes = seconds/sim;
     seconds = seconds%sim;

@@ -176,19 +176,28 @@ std::unordered_map<string,string> LinuxParser::getStatus(Process p[[maybe_unused
 }
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(Process p[[maybe_unused]]) { return string(); }
+string LinuxParser::Command(Process p) {
+  std::ifstream f{kProcDirectory+to_string(p.Pid())+kCmdlineFilename};
+  std::string line;
+  if (getline(f,line)){
+    return line;
+  }
+  return string();
+}
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the functio
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(Process p[[maybe_unused]]) {
+/*
+string LinuxParser::Uid(Process p) {
   return p.status["Uid:"];
 }
-
+*/
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
+/*
 string LinuxParser::User(Process p) {
   struct passwd *pswd;
   std::stringstream ss{p.status["Uid:"]};
@@ -197,7 +206,18 @@ string LinuxParser::User(Process p) {
   pswd=getpwuid(uid);
   return pswd->pw_name;
 }
-
+*/
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(Process p[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(Process p) {
+  std::ifstream f{kProcDirectory+to_string(p.Pid())+kStatFilename};
+  std::string val;
+  long ret;
+  for (int i=0;i<22;i++){
+    f>>val;
+    if (i==21){
+      ret=std::stol(val);
+    }
+  }
+  return ret;
+}
