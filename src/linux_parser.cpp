@@ -145,7 +145,21 @@ int LinuxParser::CpuUtilization() {
     tt += n;
   return 1.0-(stat_map["cpu"][3]/tt);
 }
+long LinuxParser::CpuUtilization(Process p) {
+  std::ifstream f{kProcDirectory+to_string(p.Pid())+kStatFilename};
+  string token;
+  for (int i=0;i<14;i++){
+    f>>token;
+  }
+  long utime,stime,tt,cutime,cstime,starttime=LinuxParser::UpTime(p),seconds,uptime=LinuxParser::UpTime();
+  f>>utime>>stime>>cutime>>cstime;
 
+  long hertz=sysconf(_SC_CLK_TCK);
+  tt = utime + stime;
+  tt = tt + cutime + cstime;
+  seconds = uptime - (starttime / hertz);
+  return ((tt / hertz) / seconds);
+}
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
   parse_stat();
