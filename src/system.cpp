@@ -18,6 +18,9 @@ using std::vector;
 Processor& System::Cpu() { return cpu_; }
 
 void System::update(){
+    processes_={};
+    proc=-1;
+    proc_r=-1;
     return;
 }
 
@@ -25,7 +28,10 @@ void System::update(){
 vector<Process>& System::Processes() {
     if (processes_.size()==0){
         for (auto x:LinuxParser::Pids()){
-            processes_.push_back(Process {x});
+            Process t{x};
+            if (t.Command().size()<1)
+                continue;
+            processes_.push_back(t);
         }
     }
     return processes_;
