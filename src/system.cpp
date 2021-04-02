@@ -19,6 +19,7 @@ Processor& System::Cpu() { return cpu_; }
 
 void System::update(){
     processes_={};
+    Processes();
     proc=-1;
     proc_r=-1;
     return;
