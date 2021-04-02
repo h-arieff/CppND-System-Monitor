@@ -2,5 +2,5 @@
 #include <iostream>
 int main(){
     System s;
-    std::cout<<s.Processes()[0].Ram()<<std::endl;
+    std::cout<<s.Processes()[0].CpuUtilization()<<std::endl;
 }
