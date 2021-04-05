@@ -24,7 +24,7 @@ void System::update(){
 }
 
 // TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() {
+vector<Process> System::Processes() {
     std::vector<Process> processes_ = {};
     if (processes_.size()==0){
         for (auto x:LinuxParser::Pids()){
