@@ -19,7 +19,9 @@ Processor& System::Cpu() { return cpu_; }
 
 void System::update(){
     processes_={};
+    int n=processes_.size();
     Processes();
+    n=processes_[0].Pid();
     proc=-1;
     proc_r=-1;
     return;
