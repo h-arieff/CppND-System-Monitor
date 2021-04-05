@@ -26,7 +26,6 @@ class System {
   int proc=-1;
   int proc_r=-1; 
   Processor cpu_ = {};
-  std::vector<Process> processes_ = {};
 };
 
 #endif
